@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oráculo de Tzintli - Nebulosa y Asemic Complejo</title>
+    <style>
+        * { 
+            box-sizing: border-box; 
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #050505;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+            color: #d8d8d8;
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* EFECTO NEBULOSA: Un gradiente suave y místico en el fondo oscuro */
+            background: radial-gradient(circle at 50% 40%, rgba(35, 30, 45, 0.4) 0%, rgba(12, 10, 18, 0.2) 50%, #050505 100%);
+        }
+        #input-container {
+            width: 50vw;
+            text-align: center;
+            z-index: 10;
+            transition: opacity 0.4s ease;
+        }
+        #pregunta-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #333;
+            color: #d8d8d8;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5vw;
+            text-align: center;
+            padding: 10px;
+            outline: none;
+            letter-spacing: 1px;
+        }
+        #pregunta-input:focus {
+            border-bottom: 1px solid #666;
+        }
+        #oraculo-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="canvas-container">
+    <div id="input-container">
+        <input type="text" id="pregunta-input" placeholder="Haz tu pregunta..." autocomplete="off">
+    </div>
+    <canvas id="oraculo-canvas"></canvas>
+</div>
+
+<script>
+(function() {
+    const inputContainer = document.getElementById("input-container");
+    const inputField = document.getElementById("pregunta-input");
+    const canvas = document.getElementById("oraculo-canvas");
+    const ctx = canvas.getContext("2d");
+
+    function ajustarPantalla() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    ajustarPantalla();
+    window.addEventListener("resize", ajustarPantalla);
+
+    inputField.focus();
+    document.body.addEventListener("click", () => {
+        if (estado === "PREGUNTA") inputField.focus();
+    });
+
+    const palabraBase = ["T", "Z", "I", "N", "T", "L", "I"];
+    let estado = "PREGUNTA"; 
+
+    function obtenerPermutacionTzintli() {
+        let letras = [...palabraBase];
+        for (let i = letras.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [letras[i], letras[j]] = [letras[j], letras[i]];
+        }
+        return letras;
+    }
+
+    // TRAZO ASÉMICO COMPLEJO: Crestas altas, curvas cerradas y líneas entrelazadas que se cruzan
+    function dibujarAsemicoComplejo(xCentro, yInicio, ancho) {
+        ctx.strokeStyle = "rgba(180, 180, 180, 0.45)";
+        ctx.lineWidth = 1.3;
+        ctx.beginPath();
+
+        let xActual = xCentro - ancho / 2;
+        let yBase = yInicio;
+
+        ctx.moveTo(xActual, yBase);
+
+        while (xActual < xCentro + ancho / 2) {
+            let pasoX = Math.random() * 12 + 6;
+            
+            // CRESTAS MÁS ALTAS: Rango vertical de oscilación mucho más pronunciado
+            let alturaCresta = (Math.random() * 45 - 22.5); 
+            
+            // LÍNEAS QUE SE CRUZAN Y CURVAS: Forzar bucles de retroceso en el eje X para crear nudos caligráficos
+            let controlX1 = xActual + pasoX * 0.8;
+            let controlY1 = yBase + alturaCresta * 2.2;
+            
+            let controlX2 = xActual - pasoX * 0.4; // Retroceso en X que fuerza el cruce de líneas
+            let controlY2 = yBase - alturaCresta * 2.2;
+            
+            xActual += pasoX;
+            ctx.bezierCurveTo(controlX1, controlY1, controlX2, controlY2, xActual, yBase);
+            
+            // Pequeños lazos adicionales aleatorios para densificar las curvas complejas
+            if (Math.random() > 0.6) {
+                ctx.arc(xActual, yBase, Math.abs(alturaCresta * 0.2), 0, Math.PI * 2);
+                ctx.moveTo(xActual, yBase);
+            }
+        }
+        ctx.stroke();
+    }
+
+    function revelarRespuesta() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const centroX = canvas.width / 2;
+        const centroY = canvas.height / 2;
+        
+        const letrasPermutadas = obtenerPermutacionTzintli();
+        let nodosConstelacion = [];
+
+        const radioDispersiónX = canvas.width * 0.22;
+        const radioDispersiónY = canvas.height * 0.15;
+
+        letrasPermutadas.forEach((letra, index) => {
+            let x = centroX + (Math.sin(index * 2.5) * radioDispersiónX) + (Math.random() * 40 - 20);
+            let y = (centroY - canvas.height * 0.15) + (Math.cos(index * 1.8) * radioDispersiónY) + (Math.random() * 40 - 20);
+            
+            nodosConstelacion.push({ x, y, letra });
+        });
+
+        // Dibujar los puntos estelares puros y rotular las letras
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "14px 'Courier New', Courier, monospace";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        nodosConstelacion.forEach((nodo) => {
+            ctx.beginPath();
+            ctx.arc(nodo.x, nodo.y, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = "rgba(216, 216, 216, 0.7)";
+            ctx.fillText(nodo.letra, nodo.x + 12, nodo.y - 12);
+        });
+
+        // Posicionar el enunciado asémico complejo abajo de las estrellas
+        const yAsemico = centroY + canvas.height * 0.13;
+        const anchoAsemico = canvas.width * 0.38;
+        dibujarAsemicoComplejo(centroX, yAsemico, anchoAsemico);
+    }
+
+    window.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            if (estado === "PREGUNTA") {
+                if (inputField.value.trim() !== "") {
+                    estado = "RESPUESTA";
+                    inputContainer.style.opacity = "0"; 
+                    inputField.blur();
+                    revelarRespuesta();
+                }
+            } else if (estado === "RESPUESTA") {
+                estado = "PREGUNTA";
+                ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                inputField.value = ""; 
+                inputContainer.style.opacity = "1"; 
+                inputField.focus();
+            }
+        }
+    });
+
+})();
+</script>
+</body>
+</html>
